@@ -50,7 +50,10 @@ def standard_colors():
 def convert_ldap_timestamp(ldap_timestamp):
     return pd.to_datetime(ldap_timestamp / 1e7 - 11644473600, unit='s')
 
-
+def convert_unix_timestamp(nanoseconds):
+    import pandas as pd
+    # Convert nanoseconds to datetime
+    return pd.to_datetime(nanoseconds, unit='ns')
 # %% Load and write HDF files
 
 
