@@ -124,9 +124,9 @@ def save_dict_via_df_to_hdf(dict_to_merge, path):
     for key, df in dict_to_merge.items():
         df_copy = df.copy()  # Create a copy of the DataFrame to avoid modifying the original
         df_copy['key'] = key  # Add the key as a new column
-        master_df = pd.concat([master_df, df_copy], ignore_index=False)  # Append the DataFrame to the master
+        master_df = pd.concat([master_df, df_copy], ignore_index=True)  # Append the DataFrame to the master
 
-    master_df.to_hdf(path, key='master_df', mode='w')
+    master_df.to_hdf(path, key='master_df', mode='w',format='table')
 
 
 # open dict that was saved as df in hdf
