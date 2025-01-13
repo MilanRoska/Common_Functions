@@ -112,11 +112,11 @@ def combine_hdf_dicts(folder_path):
 # convert dict to df and save df as hdf
 def save_dict_via_df_to_hdf(dict_to_merge, path):
     """
-    Saves the dictonary as a merged master DataFrame to an HDF5 file.
-    Compression will save the former keys in a column labeled key
+    Saves the dictionary as a merged master DataFrame to an HDF5 file.
+    Compression will save the former keys in a column labeled 'key'.
 
     Parameters:
-    dict_to_merge (pd.DataFrame): any dictonary that should be compressed into a df.
+    dict_to_merge (dict): A dictionary where keys are identifiers and values are DataFrames.
     path (str): The path where the HDF5 file will be saved.
     """
     master_df = pd.DataFrame()  # Initialize an empty DataFrame
@@ -124,12 +124,20 @@ def save_dict_via_df_to_hdf(dict_to_merge, path):
     for key, df in dict_to_merge.items():
         df_copy = df.copy()  # Create a copy of the DataFrame to avoid modifying the original
         df_copy['key'] = key  # Add the key as a new column
+
+        # Ensure all numeric columns are converted to float64
+        for col in df_copy.select_dtypes(include=['int', 'float']).columns:
+            df_copy[col] = df_copy[col].astype('float64')
+
+        df_copy.reset_index(inplace=True)  # Save the index as a column
         master_df = pd.concat([master_df, df_copy], ignore_index=True)  # Append the DataFrame to the master
 
-    master_df.to_hdf(path, key='master_df', mode='w',format='table')
+    if master_df.empty:
+        raise ValueError("The provided dictionary is empty. No data to save.")
+
+    master_df.to_hdf(path, key='master_df', mode='w', format='table')
 
 
-# open dict that was saved as df in hdf
 def open_hdf_to_dict_via_df(path):
     """
     Opens the HDF5 file containing the master DataFrame and converts it back to a dictionary of DataFrames.
@@ -143,9 +151,15 @@ def open_hdf_to_dict_via_df(path):
     # Load the master DataFrame from the HDF5 file
     master_df = pd.read_hdf(path, key='master_df')
 
+    if master_df.empty:
+        raise ValueError("The HDF5 file contains no data.")
+
     # Convert the master DataFrame back into a dictionary
     dict_from_master = {}
     for key in master_df['key'].unique():
-        dict_from_master[key] = master_df[master_df['key'] == key].drop(columns=['key'])
+        df = master_df[master_df['key'] == key].drop(columns=['key'])
+        if 'index' in df.columns:
+            df.set_index('index', inplace=True)  # Restore the index if it was saved as a column
+        dict_from_master[key] = df
 
     return dict_from_master
