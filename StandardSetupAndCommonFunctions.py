@@ -48,12 +48,26 @@ def standard_colors():
 
 # %% Timestamp conversion
 def convert_ldap_timestamp(ldap_timestamp):
-    return pd.to_datetime(ldap_timestamp / 1e7 - 11644473600, unit='s')
+    return pd.to_datetime(ldap_timestamp / 1e7 - 11644473600, unit='ns')
 
-def convert_unix_timestamp(nanoseconds):
+def convert_unix_timestamp(nanoseconds, resolution='ns'):
     import pandas as pd
     # Convert nanoseconds to datetime
-    return pd.to_datetime(nanoseconds, unit='ns')
+    if resolution=='ns':
+        converted_time = pd.to_datetime(nanoseconds, unit='ns')
+    elif resolution=='ms':
+        converted_time = pd.to_datetime(nanoseconds, unit='ms')
+    elif resolution=='s':
+        converted_time = pd.to_datetime(nanoseconds, unit='s')
+    elif resolution=='us':
+        converted_time = pd.to_datetime(nanoseconds, unit='us')
+    return converted_time
+
+def covnert_igor_timestamp(igor_timestamp):
+    import pandas as pd
+    base_time = pd.Timestamp("1904-01-01 00:00:00", tz="UTC")
+    return base_time + pd.to_timedelta(igor_timestamp, unit='s')
+    
 # %% Load and write HDF files
 
 
