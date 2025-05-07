@@ -47,8 +47,8 @@ def standard_colors():
 
 
 # %% Timestamp conversion
-def convert_ldap_timestamp(ldap_timestamp):
-    return pd.to_datetime(ldap_timestamp / 1e7 - 11644473600, unit='ns')
+def convert_ldap_timestamp(ldap_timestamp, unit='ns'):
+    return pd.to_datetime(ldap_timestamp / 1e7 - 11644473600, unit=unit)
 
 def convert_unix_timestamp(nanoseconds, resolution='ns'):
     import pandas as pd
