@@ -10,6 +10,28 @@ import periodictable as pt
 import re
 from collections import defaultdict
 
+# %% additonal info
+
+# Atomic masses (rounded to nearest whole number for nominal mass)
+NOMINAL_MASSES = {
+    'H': 1,
+    'C': 12,
+    'N': 14,
+    'O': 16,
+    'F': 19,
+    'Na': 23,
+    'Si': 28,
+    'P': 31,
+    'S': 32,
+    'Cl': 35,
+    'K': 39,
+    'Ca': 40,
+    'Fe': 56,
+    'Si': 28
+    # Add more elements as needed
+}
+
+
 # %% fucntions
 
 
@@ -119,6 +141,7 @@ def extract_nh4_plus_cdot(formula: str):
     updated_formula = f'{remaining} · {nh4}'
     return updated_formula
 
+<<<<<<< HEAD
 # function to count all elements in a formula to a list
 # read out output like this count_elements(formula).get('C', 0)
 def count_elements(formula):
@@ -160,3 +183,23 @@ def classify_group(formula):
         else:
             return 'CH'
     return 'Other'
+=======
+
+def parse_formula(formula):
+    # Remove +
+    formula = formula.rstrip('+')
+
+    # Match elements and counts (e.g., 'C10', 'H34', 'Si5')
+    pattern = r'([A-Z][a-z]*)(\d*)'
+    matches = re.findall(pattern, formula)
+
+    return [(elem, int(count) if count else 1) for elem, count in matches]
+
+
+def nominal_mass_and_label(formula):
+    elements = parse_formula(formula)
+    mass = sum(NOMINAL_MASSES[el] * cnt for el, cnt in elements)
+
+    label = f"m{mass}_{formula.rstrip('+')}_cps"
+    return mass, label
+>>>>>>> e271f12a85cc01592aefdbdef52774c40e6e6b39
