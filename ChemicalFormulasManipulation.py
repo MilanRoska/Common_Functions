@@ -164,7 +164,6 @@ def extract_nh4_plus_cdot(formula: str):
     updated_formula = f'{remaining} · {nh4}'
     return updated_formula
 
-<<<<<<< HEAD
 # function to count all elements in a formula to a list
 # read out output like this count_elements(formula).get('C', 0)
 def count_elements(formula):
@@ -206,7 +205,6 @@ def classify_group(formula):
         else:
             return 'CH'
     return 'Other'
-=======
 
 def parse_formula(formula):
     # Remove +
@@ -225,4 +223,4 @@ def nominal_mass_and_label(formula):
 
     label = f"m{mass}_{formula.rstrip('+')}_cps"
     return mass, label
->>>>>>> e271f12a85cc01592aefdbdef52774c40e6e6b39
+
