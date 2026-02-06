@@ -58,6 +58,29 @@ def strip_nh4_plus(formula: str):
     return stripped_formula
 
 
+# function to drop NH4+ from formula reducing n by 1 h by 4 and strip the +
+def strip_h_plus(formula: str):
+    # Remove + sign
+    formula = formula.rstrip('+')
+
+    # Extract elements and their counts
+    matches = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
+    element_counts = {}
+    for elem, count in matches:
+        count = int(count) if count else 1
+        element_counts[elem] = element_counts.get(elem, 0) + count
+
+    # Adjust counts
+    element_counts['H'] = max(0, element_counts.get('H', 0) - 1)
+
+    # Reconstruct formula with alphabetical order
+    stripped_formula = ''.join(
+        f"{elem}{element_counts[elem] if element_counts[elem] > 1 else ''}"
+        for elem in sorted(element_counts) if element_counts[elem] > 0
+    )
+    return stripped_formula
+
+
 # fucntion to spereate abse formula and the NH4+ ion
 def extract_nh4_plus(formula: str):
     # Parse chemical formula into element counts
