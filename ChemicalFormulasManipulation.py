@@ -6,6 +6,7 @@ Created on Thu Jul  3 11:20:51 2025
 """
 
 # %% packages
+import periodictable as pt
 import re
 from collections import defaultdict
 
@@ -163,6 +164,49 @@ def extract_nh4_plus_cdot(formula: str):
     updated_formula = f'{remaining} · {nh4}'
     return updated_formula
 
+<<<<<<< HEAD
+# function to count all elements in a formula to a list
+# read out output like this count_elements(formula).get('C', 0)
+def count_elements(formula):
+    """Return dict of element counts from a formula like 'C7H14O2'."""
+    matches = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
+    counts = {}
+    for elem, count in matches:
+        count = int(count) if count else 1
+        counts[elem] = counts.get(elem, 0) + count
+    return counts
+
+# calcaultes exact mass for a formula
+def mass_from_formula(formula):
+    """Compute molecular mass from formula like 'C7H14O'."""
+    matches = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
+    total_mass = 0
+    for elem, count in matches:
+        count = int(count) if count else 1
+        try:
+            total_mass += getattr(pt, elem).mass * count
+        except AttributeError:
+            return None  # invalid element
+    return total_mass
+
+
+# clasify group of compound CH, CHO, CHON, CHON2, CHON3
+def classify_group(formula):
+    counts = count_elements(formula)
+    has_C = 'C' in counts
+    has_H = 'H' in counts
+    has_O = 'O' in counts
+    N = counts.get('N', 0)
+
+    if has_C and has_H:
+        if N > 0:
+            return f'CHON{N}' if N <= 3 else 'CHON>3'
+        elif has_O:
+            return 'CHO'
+        else:
+            return 'CH'
+    return 'Other'
+=======
 
 def parse_formula(formula):
     # Remove +
@@ -181,3 +225,4 @@ def nominal_mass_and_label(formula):
 
     label = f"m{mass}_{formula.rstrip('+')}_cps"
     return mass, label
+>>>>>>> e271f12a85cc01592aefdbdef52774c40e6e6b39
